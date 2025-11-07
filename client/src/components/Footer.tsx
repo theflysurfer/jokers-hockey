@@ -40,9 +40,9 @@ export default function Footer() {
               {quickLinks.map((link) => (
                 <li key={link.path}>
                   <Link href={link.path}>
-                    <a className="text-muted-foreground hover:text-primary transition-colors" data-testid={`footer-link-${link.name.toLowerCase()}`}>
+                    <span className="text-muted-foreground hover:text-primary transition-colors cursor-pointer" data-testid={`footer-link-${link.name.toLowerCase()}`}>
                       {link.name}
-                    </a>
+                    </span>
                   </Link>
                 </li>
               ))}
