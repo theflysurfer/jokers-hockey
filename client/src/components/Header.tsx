@@ -7,6 +7,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
+import CartDrawer from "./CartDrawer";
 
 export default function Header() {
   const [location] = useLocation();
@@ -17,6 +18,7 @@ export default function Header() {
     { name: "Le Club", path: "/club" },
     { name: "Équipes", path: "/equipes" },
     { name: "Actualités", path: "/actualites" },
+    { name: "Boutique", path: "/boutique" },
     { name: "Contact", path: "/contact" },
   ];
 
@@ -49,7 +51,8 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-2">
+            <CartDrawer />
             <Button variant="default" data-testid="button-join">
               Nous Rejoindre
             </Button>
@@ -75,9 +78,12 @@ export default function Header() {
                     </Button>
                   </Link>
                 ))}
-                <Button variant="default" className="mt-4" data-testid="mobile-button-join">
-                  Nous Rejoindre
-                </Button>
+                <div className="flex gap-2 mt-4">
+                  <CartDrawer />
+                  <Button variant="default" className="flex-1" data-testid="mobile-button-join">
+                    Rejoindre
+                  </Button>
+                </div>
               </nav>
             </SheetContent>
           </Sheet>

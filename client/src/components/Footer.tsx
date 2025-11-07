@@ -9,6 +9,7 @@ export default function Footer() {
     { name: "Le Club", path: "/club" },
     { name: "Équipes", path: "/equipes" },
     { name: "Actualités", path: "/actualites" },
+    { name: "Boutique", path: "/boutique" },
     { name: "Contact", path: "/contact" },
   ];
 
