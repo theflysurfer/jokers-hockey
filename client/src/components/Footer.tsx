@@ -19,9 +19,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-2xl">J</span>
-              </div>
+              <img
+                src="/attached_assets/vignette_1762612341487.png"
+                alt="Les Jokers d'Aubagne"
+                className="w-16 h-16 object-contain"
+              />
               <div className="flex flex-col">
                 <span className="font-bold text-lg leading-tight">Les Jokers</span>
                 <span className="text-sm text-muted-foreground leading-tight">Aubagne</span>

@@ -28,9 +28,11 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" data-testid="link-home">
             <div className="flex items-center gap-3 cursor-pointer">
-              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-xl lg:text-2xl">J</span>
-              </div>
+              <img
+                src="/attached_assets/vignette_1762612341487.png"
+                alt="Les Jokers d'Aubagne"
+                className="w-10 h-10 lg:w-12 lg:h-12 object-contain"
+              />
               <div className="flex flex-col">
                 <span className="font-bold text-base lg:text-lg leading-tight">Les Jokers</span>
                 <span className="text-xs lg:text-sm text-muted-foreground leading-tight">Aubagne</span>
