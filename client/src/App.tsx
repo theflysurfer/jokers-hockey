@@ -10,6 +10,7 @@ import Home from "@/pages/Home";
 import Contact from "@/pages/Contact";
 import Shop from "@/pages/Shop";
 import Club from "@/pages/Club";
+import Actualites from "@/pages/Actualites";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/club" component={Club} />
+      <Route path="/actualites" component={Actualites} />
       <Route path="/boutique" component={Shop} />
       <Route path="/contact" component={Contact} />
       <Route component={NotFound} />
