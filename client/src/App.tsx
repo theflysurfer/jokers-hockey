@@ -11,6 +11,7 @@ import Contact from "@/pages/Contact";
 import Shop from "@/pages/Shop";
 import Club from "@/pages/Club";
 import Actualites from "@/pages/Actualites";
+import Equipes from "@/pages/Equipes";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -18,6 +19,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/club" component={Club} />
+      <Route path="/equipes" component={Equipes} />
       <Route path="/actualites" component={Actualites} />
       <Route path="/boutique" component={Shop} />
       <Route path="/contact" component={Contact} />
