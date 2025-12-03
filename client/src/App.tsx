@@ -12,6 +12,7 @@ import Shop from "@/pages/Shop";
 import Club from "@/pages/Club";
 import Actualites from "@/pages/Actualites";
 import Equipes from "@/pages/Equipes";
+import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/actualites" component={Actualites} />
       <Route path="/boutique" component={Shop} />
       <Route path="/contact" component={Contact} />
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
