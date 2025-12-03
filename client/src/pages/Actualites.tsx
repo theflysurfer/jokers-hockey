@@ -1,10 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, Mail } from "lucide-react";
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CalendarView from "@/components/CalendarView";
+import PhotoGallery from "@/components/PhotoGallery";
+import VideoGallery from "@/components/VideoGallery";
 import matchActionImage from "@assets/generated_images/Roller_hockey_match_action_45dae761.png";
 import teamPhotoImage from "@assets/generated_images/Team_group_photo_purple_96cb5224.png";
 import youthTrainingImage from "@assets/generated_images/Youth_training_session_9bba8072.png";
@@ -13,8 +13,6 @@ import victoryCelebrationImage from "@assets/generated_images/Team_victory_celeb
 import practiceDrillsImage from "@assets/generated_images/Team_practice_drills_76b28bbc.png";
 
 export default function Actualites() {
-  const [email, setEmail] = useState("");
-  const { toast } = useToast();
 
   const newsArticles = [
     {
@@ -82,56 +80,6 @@ export default function Actualites() {
     { id: "6", src: practiceDrillsImage, alt: "Exercices d'entraînement" },
   ];
 
-  const upcomingMatches = [
-    {
-      id: "1",
-      date: "16 Novembre 2024",
-      time: "20:00",
-      homeTeam: "Les Jokers d'Aubagne",
-      awayTeam: "Nice Roller Hockey",
-      location: "Gymnase Municipal, Aubagne",
-      competition: "Nationale 1 - Groupe 2",
-    },
-    {
-      id: "2",
-      date: "23 Novembre 2024",
-      time: "19:30",
-      homeTeam: "Toulon RHC",
-      awayTeam: "Les Jokers d'Aubagne",
-      location: "Palais des Sports, Toulon",
-      competition: "Nationale 1 - Groupe 2",
-    },
-    {
-      id: "3",
-      date: "30 Novembre 2024",
-      time: "20:00",
-      homeTeam: "Les Jokers d'Aubagne",
-      awayTeam: "Montpellier Roller",
-      location: "Gymnase Municipal, Aubagne",
-      competition: "Nationale 1 - Groupe 2",
-    },
-    {
-      id: "4",
-      date: "7 Décembre 2024",
-      time: "18:30",
-      homeTeam: "Avignon Hockey Club",
-      awayTeam: "Les Jokers d'Aubagne",
-      location: "Arena d'Avignon",
-      competition: "Nationale 1 - Groupe 2",
-    },
-  ];
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      toast({
-        title: "Inscription réussie !",
-        description: `${email} a été ajouté à notre newsletter`,
-      });
-      setEmail("");
-    }
-  };
-
   return (
     <div>
       <section className="bg-card py-12 lg:py-16 border-b">
@@ -171,81 +119,23 @@ export default function Actualites() {
         </div>
       </section>
 
-      <section className="bg-card py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-8 text-center">Galerie Photo</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-            {galleryImages.map((image) => (
-              <div
-                key={image.id}
-                className="aspect-video overflow-hidden rounded-md hover-elevate active-elevate-2 cursor-pointer"
-                data-testid={`gallery-image-${image.id}`}
-              >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-full h-full object-cover transition-transform hover:scale-105"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="max-w-7xl mx-auto px-4 md:px-8 py-16 lg:py-20">
-        <h2 className="text-3xl lg:text-4xl font-bold mb-8">Calendrier des matchs</h2>
-        <div className="space-y-4">
-          {upcomingMatches.map((match) => (
-            <Card key={match.id} className="p-6" data-testid={`match-${match.id}`}>
-              <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="w-5 h-5" />
-                  <span className="font-semibold" data-testid="text-match-date">{match.date}</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Clock className="w-5 h-5" />
-                  <span data-testid="text-match-time">{match.time}</span>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-center gap-4 mb-2">
-                    <span className="font-semibold text-lg" data-testid="text-home-team">{match.homeTeam}</span>
-                    <span className="text-muted-foreground">vs</span>
-                    <span className="font-semibold text-lg" data-testid="text-away-team">{match.awayTeam}</span>
-                  </div>
-                  <Badge variant="outline" className="mb-2" data-testid="badge-competition">{match.competition}</Badge>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="w-5 h-5" />
-                  <span className="text-sm" data-testid="text-location">{match.location}</span>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-primary/5 py-16 lg:py-20">
-        <div className="max-w-3xl mx-auto px-4 md:px-8 text-center">
-          <Mail className="w-12 h-12 text-primary mx-auto mb-4" />
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Restez informé</h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Inscrivez-vous à notre newsletter pour recevoir toutes les actualités du club
-          </p>
-          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <Input
-              type="email"
-              placeholder="Votre adresse email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="flex-1"
-              data-testid="input-newsletter-email"
-            />
-            <Button type="submit" data-testid="button-newsletter-submit">
-              S'inscrire
-            </Button>
-          </form>
-        </div>
+        <Tabs defaultValue="calendar" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="calendar">Calendrier</TabsTrigger>
+            <TabsTrigger value="photos">Photos</TabsTrigger>
+            <TabsTrigger value="videos">Vidéos</TabsTrigger>
+          </TabsList>
+          <TabsContent value="calendar">
+            <CalendarView />
+          </TabsContent>
+          <TabsContent value="photos">
+            <PhotoGallery title="Galerie Photos" />
+          </TabsContent>
+          <TabsContent value="videos">
+            <VideoGallery title="Vidéos du Club" />
+          </TabsContent>
+        </Tabs>
       </section>
     </div>
   );

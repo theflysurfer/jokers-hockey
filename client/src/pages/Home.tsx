@@ -2,14 +2,21 @@ import { Link } from "wouter";
 import Hero from "@/components/Hero";
 import NewsCard from "@/components/NewsCard";
 import TeamCategory from "@/components/TeamCategory";
+import NextMatchWidget from "@/components/NextMatchWidget";
+import RecentResults from "@/components/RecentResults";
+import InstagramFeed from "@/components/InstagramFeed";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import { Button } from "@/components/ui/button";
 import { Users, Star, Trophy, Target } from "lucide-react";
+import { useUpcomingMatches, useRecentResults } from "@/hooks/use-matches";
 import heroImage from "@assets/generated_images/Roller_hockey_action_shot_419972d5.png";
 import newsImage1 from "@assets/generated_images/Team_celebration_moment_8986afec.png";
 import newsImage2 from "@assets/generated_images/Youth_team_photo_5677652d.png";
 import newsImage3 from "@assets/generated_images/Training_session_photo_930d89f8.png";
 
 export default function Home() {
+  const { data: upcomingMatches } = useUpcomingMatches(1);
+  const { data: recentResults } = useRecentResults(3);
   const news = [
     {
       title: "Victoire éclatante contre Marseille !",
@@ -71,6 +78,17 @@ export default function Home() {
         onSecondaryClick={() => console.log('Navigate to contact')}
       />
 
+      <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <NextMatchWidget match={upcomingMatches?.[0]} />
+          <NewsletterSignup />
+        </div>
+      </section>
+
+      {recentResults && recentResults.length > 0 && (
+        <RecentResults matches={recentResults} />
+      )}
+
       <section className="max-w-7xl mx-auto px-4 md:px-8 py-16 lg:py-20">
         <div className="text-center mb-12">
           <h2 className="text-4xl lg:text-5xl font-bold mb-4">Dernières Actualités</h2>
@@ -114,6 +132,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <InstagramFeed instagramUsername="lesjokersdaubagne" />
 
       <section className="max-w-7xl mx-auto px-4 md:px-8 py-16 lg:py-20">
         <div className="text-center">

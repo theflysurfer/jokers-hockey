@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { Facebook, Instagram, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import NewsletterSignup from "./NewsletterSignup";
 
 export default function Footer() {
   const quickLinks = [
@@ -16,6 +17,10 @@ export default function Footer() {
   return (
     <footer className="bg-card border-t mt-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 lg:py-16">
+        <div className="mb-12">
+          <NewsletterSignup compact />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
             <div className="flex items-center gap-3 mb-4">
