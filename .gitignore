@@ -4,3 +4,14 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+.local/
+
+# Claude Code logs
+.claude/audit.log
+.claude/session.log
+.claude/settings.local.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local

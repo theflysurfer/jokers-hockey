@@ -1,0 +1,47 @@
+{
+  "model": "sonnet",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '✓ File written: $TOOL_INPUT' | jq -r '.file_path'"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '✓ File edited: $TOOL_INPUT' | jq -r '.file_path'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[AUDIT] Running bash command' >> .claude/audit.log"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"[$(date)] User prompt submitted\" >> .claude/session.log"
+          }
+        ]
+      }
+    ]
+  }
+}
