@@ -54,15 +54,39 @@ export default function Admin() {
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const photoData = {
-      title: formData.get('title'),
-      description: formData.get('description'),
-      imageUrl: formData.get('imageUrl'),
-      category: formData.get('category'),
-      matchId: formData.get('matchId') || null,
-    };
+    const imageFile = formData.get('imageFile') as File;
+
+    if (!imageFile) {
+      toast({ title: "Erreur", description: "Veuillez sélectionner une image.", variant: "destructive" });
+      setIsLoading(false);
+      return;
+    }
 
     try {
+      // First, upload the image
+      const uploadFormData = new FormData();
+      uploadFormData.append('image', imageFile);
+
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Échec de l'upload de l'image");
+      }
+
+      const { url } = await uploadResponse.json();
+
+      // Then create the photo record with the uploaded image URL
+      const photoData = {
+        title: formData.get('title'),
+        description: formData.get('description'),
+        imageUrl: url,
+        category: formData.get('category'),
+        matchId: formData.get('matchId') || null,
+      };
+
       const response = await fetch('/api/photos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -253,10 +277,17 @@ export default function Admin() {
                   </div>
 
                   <div>
-                    <Label htmlFor="imageUrl">URL de l'image</Label>
-                    <Input type="url" name="imageUrl" id="imageUrl" required placeholder="https://..." />
+                    <Label htmlFor="imageFile">Image</Label>
+                    <Input
+                      type="file"
+                      name="imageFile"
+                      id="imageFile"
+                      required
+                      accept="image/*"
+                      className="cursor-pointer"
+                    />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Hébergez l'image sur Imgur, Google Photos ou un autre service
+                      Formats acceptés : JPG, PNG, GIF, WebP (max 10MB)
                     </p>
                   </div>
 
