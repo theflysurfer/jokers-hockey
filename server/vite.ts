@@ -44,6 +44,11 @@ export async function setupVite(app: Express, server: Server) {
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
+    // Don't intercept Payload routes
+    if (url.startsWith('/api') || url.startsWith('/admin') || url.startsWith('/graphql')) {
+      return next();
+    }
+
     try {
       const clientTemplate = path.resolve(
         import.meta.dirname,

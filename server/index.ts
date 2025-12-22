@@ -71,6 +71,19 @@ app.use((req, res, next) => {
     // - /api/* - REST API
     // - /graphql - GraphQL API (if enabled)
 
+    // Debug: Log all registered routes
+    app._router.stack.forEach((middleware: any) => {
+      if (middleware.route) {
+        log(`Route registered: ${Object.keys(middleware.route.methods)} ${middleware.route.path}`);
+      } else if (middleware.name === 'router') {
+        middleware.handle.stack.forEach((handler: any) => {
+          if (handler.route) {
+            log(`Nested route: ${Object.keys(handler.route.methods)} ${handler.route.path}`);
+          }
+        });
+      }
+    });
+
     // Create HTTP server
     const server = createServer(app);
 
