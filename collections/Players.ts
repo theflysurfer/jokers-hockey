@@ -95,7 +95,10 @@ export const Players: CollectionConfig = {
       relationTo: 'media',
       required: false,
       admin: {
-        description: 'Photo du joueur',
+        description: 'Photo du joueur - Avatar IA ou photo réelle',
+        components: {
+          Field: '@/components#PhotoReplacementField',
+        },
       },
     },
     {

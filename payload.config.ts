@@ -11,6 +11,7 @@ import { Users } from './collections/Users'
 import { Teams } from './collections/Teams'
 import { Players } from './collections/Players'
 import { Matches } from './collections/Matches'
+import { MatchEvents } from './collections/MatchEvents'
 import { Stadiums } from './collections/Stadiums'
 import { Media } from './collections/Media'
 import { Photos } from './collections/Photos'
@@ -20,6 +21,11 @@ import { NewsletterSubscriptions } from './collections/NewsletterSubscriptions'
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'your-super-secret-key-change-this',
+  routes: {
+    api: '/api',
+    admin: '/admin',
+    graphQL: '/graphql',
+  },
   admin: {
     user: 'users',
     meta: {
@@ -33,6 +39,7 @@ export default buildConfig({
     Teams,
     Players,
     Matches,
+    MatchEvents,
     Stadiums,
     Media,
     Photos,
