@@ -51,15 +51,6 @@ export default function Actualites() {
     return "secondary";
   };
 
-  const galleryImages = [
-    { id: "1", src: matchActionImage, alt: "Match action" },
-    { id: "2", src: teamPhotoImage, alt: "Photo d'équipe" },
-    { id: "3", src: youthTrainingImage, alt: "Entraînement jeunes" },
-    { id: "4", src: goalieSaveImage, alt: "Arrêt du gardien" },
-    { id: "5", src: victoryCelebrationImage, alt: "Célébration victoire" },
-    { id: "6", src: practiceDrillsImage, alt: "Exercices d'entraînement" },
-  ];
-
   return (
     <div>
       <section className="bg-card py-12 lg:py-16 border-b">
