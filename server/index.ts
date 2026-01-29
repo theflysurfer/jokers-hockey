@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import { getPayload } from 'payload';
 import config from '../payload.config';
 import { setupVite, serveStatic, log } from "./vite";
+import { registerRoutes } from "./routes";
 
 const app = express();
 
@@ -63,6 +64,9 @@ app.use((req, res, next) => {
     });
 
     log('Payload CMS initialized successfully');
+
+    // Register custom API routes
+    await registerRoutes(app);
 
     // Payload 3.x automatically creates its routes on the Express app
     // No need to manually mount middleware
