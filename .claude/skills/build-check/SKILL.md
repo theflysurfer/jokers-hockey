@@ -1,6 +1,17 @@
 ---
 name: build-check
 description: Verify build integrity and run pre-deployment checks for the Jokers Hockey project. Use this when preparing to deploy, testing the build, or ensuring code quality before production.
+triggers:
+  - check build jokers
+  - verify build
+  - test build
+  - build quality check
+  - pre-deployment check
+  - is build ready
+  - build verification
+  - check before deploy
+  - validate build
+  - jokers build check
 ---
 
 # Build Check and Quality Assurance

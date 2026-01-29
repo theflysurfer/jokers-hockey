@@ -1,6 +1,17 @@
 ---
 name: deploy-jokers
 description: Deploy the Jokers Hockey website to production server. Use this skill when the user asks to deploy, push to production, update the live site, or publish changes to jokers.srv759970.hstgr.cloud.
+triggers:
+  - deploy jokers
+  - push to production jokers
+  - deploy jokers site
+  - publish jokers
+  - update live jokers
+  - deploy to server jokers
+  - push jokers changes
+  - jokers deployment
+  - release jokers
+  - go live jokers
 ---
 
 # Deploy Jokers to Production

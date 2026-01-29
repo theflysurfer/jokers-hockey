@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Image, Video, Trophy, Users } from "lucide-react";
+import { Calendar, Image, Video, Trophy, Users, Megaphone } from "lucide-react";
 
 export default function Admin() {
   const { toast } = useToast();
@@ -139,6 +139,42 @@ export default function Admin() {
     }
   };
 
+  const handleAddAnnouncement = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const shouldPublish = formData.get('action') === 'publish';
+
+    const announcementData = {
+      title: formData.get('title'),
+      content: formData.get('content'),
+      category: formData.get('category'),
+      authorId: null, // TODO: Use actual logged-in user ID
+      isPublished: shouldPublish,
+    };
+
+    try {
+      const response = await fetch('/api/announcements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(announcementData),
+      });
+
+      if (response.ok) {
+        const statusMsg = shouldPublish ? "publiée" : "enregistrée en brouillon";
+        toast({ title: "Annonce ajoutée !", description: `L'annonce a été ${statusMsg} avec succès.` });
+        (e.target as HTMLFormElement).reset();
+      } else {
+        toast({ title: "Erreur", description: "Impossible d'ajouter l'annonce.", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Erreur", description: "Une erreur est survenue.", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
@@ -148,7 +184,7 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="matches" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="matches">
               <Trophy className="h-4 w-4 mr-2" />
               Matchs
@@ -160,6 +196,10 @@ export default function Admin() {
             <TabsTrigger value="videos">
               <Video className="h-4 w-4 mr-2" />
               Vidéos
+            </TabsTrigger>
+            <TabsTrigger value="announcements">
+              <Megaphone className="h-4 w-4 mr-2" />
+              Annonces
             </TabsTrigger>
             <TabsTrigger value="staff">
               <Users className="h-4 w-4 mr-2" />
@@ -358,6 +398,80 @@ export default function Admin() {
                   <Button type="submit" disabled={isLoading} className="w-full">
                     {isLoading ? "Ajout en cours..." : "Ajouter la Vidéo"}
                   </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="announcements">
+            <Card>
+              <CardHeader>
+                <CardTitle>Ajouter une Annonce</CardTitle>
+                <CardDescription>Créez une annonce pour l'archive WhatsApp</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleAddAnnouncement} className="space-y-4">
+                  <div>
+                    <Label htmlFor="announcement-title">Titre</Label>
+                    <Input type="text" name="title" id="announcement-title" required placeholder="ex: Convocation match du samedi" />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="announcement-content">Contenu (Markdown supporté)</Label>
+                    <Textarea
+                      name="content"
+                      id="announcement-content"
+                      required
+                      placeholder="Exemple:&#10;&#10;Bonjour à tous,&#10;&#10;RDV **samedi 15h** à la patinoire.&#10;&#10;- Arriver 30min avant&#10;- Tenue complète&#10;- Licence FFRoller"
+                      rows={10}
+                      className="font-mono text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Utilisez **gras**, *italique*, - listes, etc.
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="announcement-category">Catégorie (Équipe)</Label>
+                    <Select name="category" required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="General">Général (Tout le club)</SelectItem>
+                        <SelectItem value="U7">U7</SelectItem>
+                        <SelectItem value="U9">U9</SelectItem>
+                        <SelectItem value="U11">U11</SelectItem>
+                        <SelectItem value="U13">U13</SelectItem>
+                        <SelectItem value="U15">U15</SelectItem>
+                        <SelectItem value="U17">U17</SelectItem>
+                        <SelectItem value="U20">U20</SelectItem>
+                        <SelectItem value="Adultes">Adultes</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      type="submit"
+                      name="action"
+                      value="draft"
+                      variant="outline"
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      {isLoading ? "Enregistrement..." : "Enregistrer Brouillon"}
+                    </Button>
+                    <Button
+                      type="submit"
+                      name="action"
+                      value="publish"
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      {isLoading ? "Publication..." : "Publier Maintenant"}
+                    </Button>
+                  </div>
                 </form>
               </CardContent>
             </Card>

@@ -1,6 +1,17 @@
 ---
 name: database-migration
 description: Manage Drizzle ORM database schema and migrations for the Jokers Hockey project. Use this when the user wants to modify the database schema, add tables, update columns, or sync database changes.
+triggers:
+  - migrate database jokers
+  - update database schema
+  - push database changes
+  - add table jokers
+  - modify jokers schema
+  - drizzle migration
+  - database migration
+  - sync database jokers
+  - update schema jokers
+  - jokers database changes
 ---
 
 # Database Migration with Drizzle ORM

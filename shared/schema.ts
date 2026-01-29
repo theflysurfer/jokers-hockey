@@ -92,3 +92,19 @@ export const staff = pgTable("staff", {
 export const insertStaffSchema = createInsertSchema(staff).omit({ id: true, createdAt: true });
 export type Staff = typeof staff.$inferSelect;
 export type InsertStaff = z.infer<typeof insertStaffSchema>;
+
+// Announcements - Archive annonces WhatsApp
+export const announcements = pgTable("announcements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  content: text("content").notNull(), // Markdown format
+  category: text("category"), // "U7", "U9", "U11", "U13", "U15", "U17", "U20", "Adultes", "General"
+  authorId: varchar("author_id").references(() => users.id),
+  isPublished: boolean("is_published").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  publishedAt: timestamp("published_at"),
+});
+
+export const insertAnnouncementSchema = createInsertSchema(announcements).omit({ id: true, createdAt: true, publishedAt: true });
+export type Announcement = typeof announcements.$inferSelect;
+export type InsertAnnouncement = z.infer<typeof insertAnnouncementSchema>;

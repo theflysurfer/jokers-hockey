@@ -5,7 +5,8 @@ import {
   type Video, type InsertVideo,
   type Newsletter, type InsertNewsletter,
   type Staff, type InsertStaff,
-  matches, photos, videos, newsletters, staff, users
+  type Announcement, type InsertAnnouncement,
+  matches, photos, videos, newsletters, staff, users, announcements
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, gte } from "drizzle-orm";
@@ -50,6 +51,14 @@ export interface IStorage {
   createStaff(staffMember: InsertStaff): Promise<Staff>;
   updateStaff(id: string, staffMember: Partial<InsertStaff>): Promise<Staff | undefined>;
   deleteStaff(id: string): Promise<void>;
+
+  // Announcements
+  getAllAnnouncements(category?: string, publishedOnly?: boolean): Promise<Announcement[]>;
+  getAnnouncementById(id: string): Promise<Announcement | undefined>;
+  createAnnouncement(announcement: InsertAnnouncement): Promise<Announcement>;
+  updateAnnouncement(id: string, announcement: Partial<InsertAnnouncement>): Promise<Announcement | undefined>;
+  deleteAnnouncement(id: string): Promise<void>;
+  publishAnnouncement(id: string): Promise<Announcement | undefined>;
 }
 
 export class DbStorage implements IStorage {
@@ -201,6 +210,55 @@ export class DbStorage implements IStorage {
 
   async deleteStaff(id: string): Promise<void> {
     await db.delete(staff).where(eq(staff.id, id));
+  }
+
+  // Announcements
+  async getAllAnnouncements(category?: string, publishedOnly = true): Promise<Announcement[]> {
+    let query = db.select().from(announcements);
+
+    const conditions = [];
+    if (publishedOnly) {
+      conditions.push(eq(announcements.isPublished, true));
+    }
+    if (category) {
+      conditions.push(eq(announcements.category, category));
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+
+    return query.orderBy(desc(announcements.publishedAt));
+  }
+
+  async getAnnouncementById(id: string): Promise<Announcement | undefined> {
+    const result = await db.select().from(announcements).where(eq(announcements.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createAnnouncement(announcement: InsertAnnouncement): Promise<Announcement> {
+    const result = await db.insert(announcements).values(announcement).returning();
+    return result[0];
+  }
+
+  async updateAnnouncement(id: string, announcement: Partial<InsertAnnouncement>): Promise<Announcement | undefined> {
+    const result = await db.update(announcements).set(announcement).where(eq(announcements.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteAnnouncement(id: string): Promise<void> {
+    await db.delete(announcements).where(eq(announcements.id, id));
+  }
+
+  async publishAnnouncement(id: string): Promise<Announcement | undefined> {
+    const result = await db.update(announcements)
+      .set({
+        isPublished: true,
+        publishedAt: new Date()
+      })
+      .where(eq(announcements.id, id))
+      .returning();
+    return result[0];
   }
 }
 

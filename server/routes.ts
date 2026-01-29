@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertMatchSchema, insertPhotoSchema, insertVideoSchema, insertNewsletterSchema, insertStaffSchema } from "@shared/schema";
+import { insertMatchSchema, insertPhotoSchema, insertVideoSchema, insertNewsletterSchema, insertStaffSchema, insertAnnouncementSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -311,6 +311,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       await storage.deleteStaff(req.params.id);
       res.status(204).send();
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Announcements routes
+  app.get("/api/announcements", async (req, res) => {
+    try {
+      const category = req.query.category as string | undefined;
+      const publishedOnly = req.query.publishedOnly !== 'false'; // Default to true
+      const announcements = await storage.getAllAnnouncements(category, publishedOnly);
+      res.json(announcements);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/announcements/:id", async (req, res) => {
+    try {
+      const announcement = await storage.getAnnouncementById(req.params.id);
+      if (!announcement) {
+        return res.status(404).json({ message: "Announcement not found" });
+      }
+      res.json(announcement);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/announcements", async (req, res) => {
+    try {
+      const announcementData = insertAnnouncementSchema.parse(req.body);
+      const announcement = await storage.createAnnouncement(announcementData);
+      res.status(201).json(announcement);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/announcements/:id", async (req, res) => {
+    try {
+      const announcement = await storage.updateAnnouncement(req.params.id, req.body);
+      if (!announcement) {
+        return res.status(404).json({ message: "Announcement not found" });
+      }
+      res.json(announcement);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/announcements/:id", async (req, res) => {
+    try {
+      await storage.deleteAnnouncement(req.params.id);
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/announcements/:id/publish", async (req, res) => {
+    try {
+      const announcement = await storage.publishAnnouncement(req.params.id);
+      if (!announcement) {
+        return res.status(404).json({ message: "Announcement not found" });
+      }
+      res.json(announcement);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

@@ -1,6 +1,17 @@
 ---
 name: pm2-management
 description: Manage the PM2 process for Jokers Hockey production server. Use this when the user wants to check logs, restart the app, monitor performance, or troubleshoot the live application.
+triggers:
+  - check jokers logs
+  - restart jokers app
+  - jokers pm2 status
+  - monitor jokers
+  - view jokers logs
+  - jokers server status
+  - pm2 logs jokers
+  - is jokers running
+  - check jokers performance
+  - jokers process status
 ---
 
 # PM2 Process Management
