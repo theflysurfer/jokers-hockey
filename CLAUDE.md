@@ -89,18 +89,20 @@ npm start                # Démarre en mode production
 # SSH vers le serveur
 ssh automation@69.62.108.82
 
-# Déploiement manuel
+# Déploiement manuel (pas de Git sur serveur pour l'instant)
 cd /var/www/jokers
-git pull origin main
+# Uploader manuellement les fichiers modifiés via scp
 npm install
 npm run build
-npm run db:push
+npm run db:push  # Confirmer interactivement ou créer tables via SQL direct
 pm2 restart jokers-hockey
 
 # Vérifier les logs
 pm2 logs jokers-hockey
 pm2 status
 ```
+
+**Note:** Utilisez les skills `/deploy-jokers` ou `/database-migration` pour déploiements automatisés.
 
 ## Variables d'Environnement
 
@@ -133,11 +135,19 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/jokers_prod
 
 ## Schéma de Base de Données
 
-Le schéma Drizzle est défini dans `shared/schema.ts`. Actuellement minimal, peut être étendu selon les besoins :
-- Tables pour actualités
-- Tables pour équipes
-- Tables pour produits
-- etc.
+Le schéma Drizzle est défini dans `shared/schema.ts`. Tables actuelles :
+- **users** - Authentification (username, password)
+- **matches** - Calendrier et résultats (date, opponent, scores, status, category)
+- **announcements** - Archive annonces WhatsApp (✨ Phase 1 MVP)
+- **photos** - Galerie photos (title, imageUrl, category, matchId)
+- **videos** - Galerie vidéos YouTube (title, youtubeId, category)
+- **newsletters** - Abonnements newsletter (email, active)
+- **staff** - Membres encadrement (name, role, category, photoUrl, bio)
+
+### Phase 1 MVP - Archive Annonces ✅
+- API: `/api/announcements` (GET, POST, PATCH, DELETE, publish)
+- Admin: Tab "Annonces" avec markdown editor
+- Public: Page `/actualites` avec fetch dynamique et filtre par équipe (U7-U20, Adultes, Général)
 
 ## Configuration Nginx
 
@@ -147,7 +157,12 @@ Configuration disponible dans :
 
 ## Documentation Complète
 
-Voir la documentation détaillée dans :
+**Projet:**
+- `SPECIFICATIONS_MVP.md` - Specs fonctionnelles Phase 1 & 2 (Archive Annonces + Inscriptions Matchs)
+- `PLAN_DEVELOPPEMENT.md` - Plan d'implémentation jour par jour
+- `ANALYSE_GAP_ARCHITECTURE.md` - Analyse code existant vs besoins MVP
+
+**Externe:**
 - `C:\Users\julien\OneDrive\Coding\_référentiels de code\Hostinger\docs\docs\02-applications\cms-sites\jokers-hockey.md`
 - `C:\Users\julien\OneDrive\Coding\_référentiels de code\Hostinger\apps\03-jokers\README.md`
 
@@ -182,7 +197,9 @@ La base de données PostgreSQL est hébergée localement sur le serveur dans le 
 ## Notes Importantes
 
 1. **Build avant déploiement**: Toujours builder localement pour vérifier avant de déployer
-2. **Migrations BDD**: Utiliser `npm run db:push` pour synchroniser le schéma
-3. **SSL**: Certificat auto-renouvelable via Let's Encrypt
+2. **Migrations BDD**: `npm run db:push` demande confirmation interactive. En prod: créer tables via SQL direct si besoin
+3. **SSL**: Certificat auto-renouvelable via Let's Encrypt. IPv6 listeners requis pour certbot.
 4. **Port**: L'application écoute sur le port 5020 (configurable via PORT env var)
 5. **Assets**: Les images sont dans `attached_assets/` et compilées dans `dist/public/assets/`
+6. **Routes**: `server/index.ts` doit importer et appeler `registerRoutes(app)` après init Payload
+7. **Date formatting**: Utiliser `toLocaleDateString()` natif plutôt que date-fns pour éviter bundle issues

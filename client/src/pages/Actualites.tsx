@@ -9,8 +9,6 @@ import CalendarView from "@/components/CalendarView";
 import PhotoGallery from "@/components/PhotoGallery";
 import VideoGallery from "@/components/VideoGallery";
 import { Megaphone } from "lucide-react";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 
 interface Announcement {
   id: string;
@@ -39,7 +37,8 @@ export default function Actualites() {
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "";
     try {
-      return format(new Date(dateString), "d MMMM yyyy", { locale: fr });
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     } catch {
       return "";
     }

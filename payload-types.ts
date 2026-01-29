@@ -71,6 +71,7 @@ export interface Config {
     teams: Team;
     players: Player;
     matches: Match;
+    'match-events': MatchEvent;
     stadiums: Stadium;
     media: Media;
     photos: Photo;
@@ -88,6 +89,7 @@ export interface Config {
     teams: TeamsSelect<false> | TeamsSelect<true>;
     players: PlayersSelect<false> | PlayersSelect<true>;
     matches: MatchesSelect<false> | MatchesSelect<true>;
+    'match-events': MatchEventsSelect<false> | MatchEventsSelect<true>;
     stadiums: StadiumsSelect<false> | StadiumsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     photos: PhotosSelect<false> | PhotosSelect<true>;
@@ -241,7 +243,7 @@ export interface Player {
   lastName: string;
   fullName?: string | null;
   /**
-   * Photo du joueur
+   * Photo du joueur - Avatar IA ou photo réelle
    */
   photo?: (number | null) | Media;
   /**
@@ -463,6 +465,73 @@ export interface Stadium {
   createdAt: string;
 }
 /**
+ * Événements en direct pour les matchs (buts, pénalités, commentaires)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "match-events".
+ */
+export interface MatchEvent {
+  id: number;
+  /**
+   * Match auquel cet événement appartient
+   */
+  match: number | Match;
+  /**
+   * Minute du match (0-60 pour match régulier, >60 pour prolongations)
+   */
+  minute: number;
+  /**
+   * Type d'événement
+   */
+  eventType:
+    | 'goal'
+    | 'assist'
+    | 'penalty'
+    | 'save'
+    | 'shot_on_goal'
+    | 'shot_off_goal'
+    | 'substitution'
+    | 'period_start'
+    | 'period_end'
+    | 'timeout'
+    | 'commentary';
+  /**
+   * Titre de l'événement (ex: "But de Lucas Dubois!")
+   */
+  title: string;
+  /**
+   * Description détaillée de l'événement
+   */
+  description?: string | null;
+  /**
+   * Joueur impliqué dans l'événement (si applicable)
+   */
+  player?: (number | null) | Player;
+  /**
+   * Équipe concernée par l'événement
+   */
+  team?: ('home' | 'away') | null;
+  /**
+   * Marquer comme moment fort du match
+   */
+  isHighlight?: boolean | null;
+  /**
+   * Score après cet événement (optionnel, utile pour les buts)
+   */
+  scoreAfter?: {
+    /**
+     * Score des Jokers après cet événement
+     */
+    home?: number | null;
+    /**
+     * Score de l'adversaire après cet événement
+     */
+    away?: number | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "photos".
  */
@@ -633,6 +702,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'matches';
         value: number | Match;
+      } | null)
+    | ({
+        relationTo: 'match-events';
+        value: number | MatchEvent;
       } | null)
     | ({
         relationTo: 'stadiums';
@@ -811,6 +884,28 @@ export interface MatchesSelect<T extends boolean = true> {
         declaredAt?: T;
         notes?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "match-events_select".
+ */
+export interface MatchEventsSelect<T extends boolean = true> {
+  match?: T;
+  minute?: T;
+  eventType?: T;
+  title?: T;
+  description?: T;
+  player?: T;
+  team?: T;
+  isHighlight?: T;
+  scoreAfter?:
+    | T
+    | {
+        home?: T;
+        away?: T;
       };
   updatedAt?: T;
   createdAt?: T;
