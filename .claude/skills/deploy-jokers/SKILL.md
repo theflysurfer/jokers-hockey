@@ -54,15 +54,18 @@ cd /var/www/jokers
 
 ### 3. Deploy Code
 
-**Option A: Via Git (Recommended)**
+**Standard Deployment (Git-based)**
+
+The server is now linked to the GitHub repository, making deployment straightforward:
+
 ```bash
-# Pull latest changes
+# Pull latest changes from GitHub
 git pull origin main
 
-# Install dependencies
+# Install/update dependencies
 npm install
 
-# Push database schema changes
+# Push database schema changes (if needed)
 npm run db:push
 
 # Build the project
@@ -76,25 +79,10 @@ pm2 status jokers-hockey
 pm2 logs jokers-hockey --lines 50
 ```
 
-**Option B: Via Direct Upload (if no Git)**
-```bash
-# On local machine: Create archive
-cd "C:\Users\julien\OneDrive\Coding\_Projets de code\2025.11 Site Web Jokers"
-tar -czf jokers-deploy.tar.gz --exclude='node_modules' --exclude='dist' --exclude='.git' .
-
-# Upload to server
-scp jokers-deploy.tar.gz automation@69.62.108.82:/var/www/jokers/
-
-# On server: Extract and deploy
-ssh automation@69.62.108.82
-cd /var/www/jokers
-tar -xzf jokers-deploy.tar.gz
-rm jokers-deploy.tar.gz
-npm install
-npm run db:push
-npm run build
-pm2 restart jokers-hockey
-```
+**Note**: The server repository is configured with:
+- Remote: https://github.com/theflysurfer/jokers-hockey.git
+- Branch: main
+- Git initialized: 2026-01-29
 
 ### 4. Verify Deployment
 
