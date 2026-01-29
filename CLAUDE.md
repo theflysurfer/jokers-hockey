@@ -85,24 +85,29 @@ npm start                # Démarre en mode production
 - **Process PM2**: `jokers-hockey`
 
 ### Commandes de Déploiement
+
+**Git Setup (✅ Configuré 2026-01-29):**
+- Remote: `https://github.com/theflysurfer/jokers-hockey.git`
+- Branch: `main`
+- Workflow: `git pull origin main` sur serveur
+
 ```bash
 # SSH vers le serveur
 ssh automation@69.62.108.82
 
-# Déploiement manuel (pas de Git sur serveur pour l'instant)
+# Déploiement Git-based
 cd /var/www/jokers
-# Uploader manuellement les fichiers modifiés via scp
+git pull origin main
 npm install
 npm run build
-npm run db:push  # Confirmer interactivement ou créer tables via SQL direct
 pm2 restart jokers-hockey
 
 # Vérifier les logs
-pm2 logs jokers-hockey
+pm2 logs jokers-hockey --lines 50
 pm2 status
 ```
 
-**Note:** Utilisez les skills `/deploy-jokers` ou `/database-migration` pour déploiements automatisés.
+**Note:** Utilisez le skill `/deploy-jokers` pour déploiements automatisés.
 
 ## Variables d'Environnement
 
@@ -190,16 +195,17 @@ La base de données PostgreSQL est hébergée localement sur le serveur dans le 
 
 ## Ressources
 
-- **Repository GitHub**: (À configurer si besoin)
+- **Repository GitHub**: https://github.com/theflysurfer/jokers-hockey.git
 - **Design Guidelines**: Voir `design_guidelines.md`
 - **Replit**: Configuration dans `.replit` et `replit.md`
 
 ## Notes Importantes
 
-1. **Build avant déploiement**: Toujours builder localement pour vérifier avant de déployer
-2. **Migrations BDD**: `npm run db:push` demande confirmation interactive. En prod: créer tables via SQL direct si besoin
-3. **SSL**: Certificat auto-renouvelable via Let's Encrypt. IPv6 listeners requis pour certbot.
-4. **Port**: L'application écoute sur le port 5020 (configurable via PORT env var)
-5. **Assets**: Les images sont dans `attached_assets/` et compilées dans `dist/public/assets/`
-6. **Routes**: `server/index.ts` doit importer et appeler `registerRoutes(app)` après init Payload
-7. **Date formatting**: Utiliser `toLocaleDateString()` natif plutôt que date-fns pour éviter bundle issues
+1. **Git Deployment**: Le serveur est maintenant lié au repo GitHub (setup 2026-01-29). Déployer via `git pull origin main`.
+2. **Build avant déploiement**: Toujours builder localement pour vérifier avant de déployer
+3. **Migrations BDD**: `npm run db:push` demande confirmation interactive. En prod: créer tables via SQL direct si besoin
+4. **SSL**: Certificat auto-renouvelable via Let's Encrypt. IPv6 listeners requis pour certbot.
+5. **Port**: L'application écoute sur le port 5020 (configurable via PORT env var)
+6. **Assets**: Les images sont dans `attached_assets/` et compilées dans `dist/public/assets/`
+7. **Routes API critiques**: `server/index.ts` DOIT importer et appeler `registerRoutes(app)` après init Payload, sinon les routes custom ne chargent pas
+8. **Date formatting**: Utiliser `toLocaleDateString()` natif plutôt que date-fns pour éviter bundle issues
