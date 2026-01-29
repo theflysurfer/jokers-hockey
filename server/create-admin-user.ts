@@ -5,23 +5,25 @@ import { users } from '@shared/schema'
 import { eq } from 'drizzle-orm'
 
 async function createAdminUser() {
-  const email = 'admin'
+  const email = 'dirjokersrha@outlook.fr'
+  const username = 'admin'
   const password = 'JokersAdmin2026!'
 
   console.log('🔐 Creating admin user...')
 
   try {
-    // Check if admin already exists
+    // Check if admin already exists (check by email since it's the unique constraint)
     const existingUser = await db
       .select()
       .from(users)
-      .where(eq(users.username, email))
+      .where(eq(users.email, email))
       .limit(1)
       .then(rows => rows[0])
 
     if (existingUser) {
       console.log('⚠️  Admin user already exists')
-      console.log(`   Username: ${email}`)
+      console.log(`   Email: ${email}`)
+      console.log(`   Username: ${username}`)
       return
     }
 
@@ -30,8 +32,10 @@ async function createAdminUser() {
 
     // Create admin user
     await db.insert(users).values({
-      username: email,
+      email: email,
+      username: username,
       password: hashedPassword,
+      role: 'admin',
     })
 
     console.log('✅ Admin user created successfully!')

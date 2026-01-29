@@ -135,14 +135,24 @@ export const setupAdminJS = (app: Express) => {
   const router = AdminJSExpress.buildAuthenticatedRouter(
     admin,
     {
-      authenticate: async (email, password) => {
-        // Find user by username or email
-        const user = await db
+      authenticate: async (emailOrUsername, password) => {
+        // Find user by email or username
+        let user = await db
           .select()
           .from(schema.users)
-          .where(eq(schema.users.username, email))
+          .where(eq(schema.users.email, emailOrUsername))
           .limit(1)
           .then(rows => rows[0])
+
+        // If not found by email, try username
+        if (!user) {
+          user = await db
+            .select()
+            .from(schema.users)
+            .where(eq(schema.users.username, emailOrUsername))
+            .limit(1)
+            .then(rows => rows[0])
+        }
 
         if (!user) {
           return null
@@ -155,7 +165,7 @@ export const setupAdminJS = (app: Express) => {
         }
 
         return {
-          email: user.username,
+          email: user.email || user.username,
           id: user.id,
         }
       },
