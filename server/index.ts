@@ -1,26 +1,14 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from 'http';
-import { getPayload } from 'payload';
-import config from '../payload.config';
 import { setupVite, serveStatic, log } from "./vite";
 import { registerRoutes } from "./routes";
+import { setupAdminJS } from "./admin";
 
 const app = express();
 
-// Payload needs access to raw body for webhooks
-declare module 'http' {
-  interface IncomingMessage {
-    rawBody: unknown
-  }
-}
-
-// JSON middleware with raw body capture
-app.use(express.json({
-  verify: (req, _res, buf) => {
-    req.rawBody = buf;
-  }
-}));
+// JSON middleware
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Request logging middleware
@@ -56,14 +44,10 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    // Initialize Payload
-    log('Initializing Payload CMS...');
-    const payload = await getPayload({
-      config,
-      express: app,
-    });
-
-    log('Payload CMS initialized successfully');
+    // Setup AdminJS
+    log('Initializing AdminJS...');
+    setupAdminJS(app);
+    log('AdminJS initialized successfully');
 
     // Register custom API routes
     await registerRoutes(app);
