@@ -54,7 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const data = await response.json();
     setUser(data.user);
-    navigate('/dashboard');
+    // Force full page redirect to ensure session is loaded
+    window.location.href = '/dashboard';
   };
 
   const logout = async () => {
