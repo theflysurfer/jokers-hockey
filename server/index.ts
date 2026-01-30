@@ -10,6 +10,9 @@ import { registerRoutes } from "./routes";
 
 const app = express();
 
+// Trust proxy (required for secure cookies behind nginx)
+app.set('trust proxy', 1);
+
 // JSON middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
