@@ -3,7 +3,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from 'http';
 import { setupVite, serveStatic, log } from "./vite";
 import { registerRoutes } from "./routes";
-import { setupAdminJS } from "./admin";
 
 const app = express();
 
@@ -44,11 +43,6 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    // Setup AdminJS
-    log('Initializing AdminJS...');
-    setupAdminJS(app);
-    log('AdminJS initialized successfully');
-
     // Register custom API routes
     await registerRoutes(app);
 
