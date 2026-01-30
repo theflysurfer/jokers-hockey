@@ -21,7 +21,7 @@
 | Nom | Email | Rôle | Mot de passe | Status |
 |-----|-------|------|--------------|--------|
 | Thomas Rousseau | thomas.rousseau@jokers.fr | **coach** | Coach123! | ✅ Créé & Testé |
-| Marie Petit | marie.petit@jokers.fr | **coach** | Coach123! | ✅ Créé |
+| Marie Petit | marie.petit@jokers.fr | **coach** | Coach123! | ✅ Créé & Testé |
 | Lucas Moreau | lucas.moreau@jokers.fr | **coach** | Coach123! | ✅ Créé |
 | Camille Simon | camille.simon@jokers.fr | **photographer** | Photo123! | ✅ Créé |
 
@@ -57,9 +57,9 @@ Set-Cookie: jokers.sid=s%3A...; Path=/; Expires=Fri, 06 Feb 2026; HttpOnly; Secu
 - SameSite=Lax (protection CSRF)
 - Expiration: 7 jours
 
-### 2. Login avec Thomas Rousseau (coach)
+### 2. Login et redirection automatique
 
-**Test avec HydraSpecter:**
+**Test 1 - Thomas Rousseau (coach):**
 1. Navigation vers /login ✅
 2. Remplissage email/password ✅
 3. Clic sur "Se connecter" ✅
@@ -68,7 +68,13 @@ Set-Cookie: jokers.sid=s%3A...; Path=/; Expires=Fri, 06 Feb 2026; HttpOnly; Secu
 6. Nom "Thomas Rousseau" affiché dans header ✅
 7. Bouton "Déconnexion" présent ✅
 
-**Note:** Redirection automatique après login ne fonctionne pas (problème wouter), navigation manuelle vers /dashboard requise.
+**Test 2 - Marie Petit (coach) - Après fix redirection:**
+1. Navigation vers /login ✅
+2. Remplissage email/password ✅
+3. Clic sur "Se connecter" ✅
+4. **Redirection automatique vers /dashboard** ✅
+5. Nom "Marie Petit" affiché dans header ✅
+6. Interface admin complète accessible ✅
 
 ### 3. Protection des routes
 
@@ -161,13 +167,13 @@ Toutes les routes GET restent accessibles sans authentification:
 **Solution:** Ajout de `app.set('trust proxy', 1)` dans server/index.ts
 **Commit:** c408ed8
 
-### 2. ⚠️ EN COURS - Redirection automatique après login
+### 2. ✅ RÉSOLU - Redirection automatique après login
 
-**Symptôme:** Après login réussi, l'utilisateur reste sur /login au lieu d'être redirigé vers /dashboard
-**Cause probable:** Problème avec wouter `navigate()` dans AuthContext ou timing du state update
-**Workaround:** Navigation manuelle vers /dashboard fonctionne
-**Impact:** Faible - le login fonctionne, seule la redirection automatique est manquante
-**À investiguer:** Code AuthContext.tsx ligne 49
+**Symptôme:** Après login réussi, l'utilisateur restait sur /login au lieu d'être redirigé vers /dashboard
+**Cause:** wouter `navigate()` était appelé avant la mise à jour du state React, causant un conflit avec ProtectedRoute
+**Solution:** Remplacement de `navigate('/dashboard')` par `window.location.href = '/dashboard'` pour forcer une vraie redirection
+**Commit:** 698a0d2
+**Test:** ✅ Vérifié avec Marie Petit (coach) - redirection automatique fonctionne
 
 ---
 
@@ -225,8 +231,9 @@ Points clés:
 - ✅ Protection des routes sensibles
 - ✅ Base de données Phase 2 prête
 - ✅ Déploiement production réussi
+- ✅ Redirection automatique après login (fix appliqué et testé)
 
-**Seul problème mineur:** Redirection automatique après login (workaround facile: navigation manuelle)
+**Tous les problèmes identifiés ont été résolus. Le système est 100% fonctionnel.**
 
 ---
 
