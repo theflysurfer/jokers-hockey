@@ -3,6 +3,7 @@
  * Exécution: tsx scripts/seed-whatsapp-announcements.ts
  */
 
+import "dotenv/config";
 import { db } from "../server/db.js";
 import { announcements } from "../shared/schema.js";
 
