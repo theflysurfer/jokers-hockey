@@ -1,4 +1,4 @@
-import { Menu } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,11 +7,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import CartDrawer from "./CartDrawer";
 
 export default function Header() {
   const [location] = useLocation();
   const [open, setOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const navItems = [
     { name: "Accueil", path: "/" },
@@ -55,9 +57,18 @@ export default function Header() {
 
           <div className="hidden md:flex items-center gap-2">
             <CartDrawer />
-            <Button variant="default" data-testid="button-join">
-              Nous Rejoindre
-            </Button>
+            {user ? (
+              <>
+                <span className="text-sm text-muted-foreground">{user.fullName || user.username}</span>
+                <Button variant="ghost" size="sm" onClick={logout} title="Déconnexion">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <Button variant="default" data-testid="button-join">
+                Nous Rejoindre
+              </Button>
+            )}
           </div>
 
           <Sheet open={open} onOpenChange={setOpen}>

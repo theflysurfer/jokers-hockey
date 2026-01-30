@@ -1,6 +1,10 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from 'http';
+import session from 'express-session';
+import passport from './auth/passport';
+import { sessionConfig } from './auth/session';
+import { registerAuthRoutes } from './auth/routes';
 import { setupVite, serveStatic, log } from "./vite";
 import { registerRoutes } from "./routes";
 
@@ -9,6 +13,11 @@ const app = express();
 // JSON middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Session and Passport
+app.use(session(sessionConfig));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -43,6 +52,9 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
+    // Register authentication routes
+    registerAuthRoutes(app);
+
     // Register custom API routes
     await registerRoutes(app);
 

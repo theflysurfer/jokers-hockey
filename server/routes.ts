@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertMatchSchema, insertPhotoSchema, insertVideoSchema, insertNewsletterSchema, insertStaffSchema, insertAnnouncementSchema } from "@shared/schema";
+import { requireRole, requireAdmin } from './auth/rbac';
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -96,7 +97,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/matches", async (req, res) => {
+  app.post("/api/matches", requireRole('coach', 'admin'), async (req, res) => {
     try {
       const matchData = insertMatchSchema.parse(req.body);
       const match = await storage.createMatch(matchData);
@@ -106,7 +107,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/matches/:id", async (req, res) => {
+  app.patch("/api/matches/:id", requireRole('coach', 'admin'), async (req, res) => {
     try {
       const match = await storage.updateMatch(req.params.id, req.body);
       if (!match) {
@@ -118,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/matches/:id", async (req, res) => {
+  app.delete("/api/matches/:id", requireRole('coach', 'admin'), async (req, res) => {
     try {
       await storage.deleteMatch(req.params.id);
       res.status(204).send();
@@ -159,7 +160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/photos", async (req, res) => {
+  app.post("/api/photos", requireRole('photographer', 'admin'), async (req, res) => {
     try {
       const photoData = insertPhotoSchema.parse(req.body);
       const photo = await storage.createPhoto(photoData);
@@ -169,7 +170,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/photos/:id", async (req, res) => {
+  app.delete("/api/photos/:id", requireRole('photographer', 'admin'), async (req, res) => {
     try {
       await storage.deletePhoto(req.params.id);
       res.status(204).send();
@@ -285,7 +286,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/staff", async (req, res) => {
+  app.post("/api/staff", requireAdmin, async (req, res) => {
     try {
       const staffData = insertStaffSchema.parse(req.body);
       const staffMember = await storage.createStaff(staffData);
@@ -295,7 +296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/staff/:id", async (req, res) => {
+  app.patch("/api/staff/:id", requireAdmin, async (req, res) => {
     try {
       const staffMember = await storage.updateStaff(req.params.id, req.body);
       if (!staffMember) {
@@ -307,7 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/staff/:id", async (req, res) => {
+  app.delete("/api/staff/:id", requireAdmin, async (req, res) => {
     try {
       await storage.deleteStaff(req.params.id);
       res.status(204).send();
@@ -340,7 +341,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/announcements", async (req, res) => {
+  app.post("/api/announcements", requireRole('secretary', 'admin'), async (req, res) => {
     try {
       const announcementData = insertAnnouncementSchema.parse(req.body);
       const announcement = await storage.createAnnouncement(announcementData);
@@ -350,7 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/announcements/:id", async (req, res) => {
+  app.patch("/api/announcements/:id", requireRole('secretary', 'admin'), async (req, res) => {
     try {
       const announcement = await storage.updateAnnouncement(req.params.id, req.body);
       if (!announcement) {
@@ -362,7 +363,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/announcements/:id", async (req, res) => {
+  app.delete("/api/announcements/:id", requireRole('secretary', 'admin'), async (req, res) => {
     try {
       await storage.deleteAnnouncement(req.params.id);
       res.status(204).send();
@@ -371,7 +372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/announcements/:id/publish", async (req, res) => {
+  app.post("/api/announcements/:id/publish", requireRole('secretary', 'admin'), async (req, res) => {
     try {
       const announcement = await storage.publishAnnouncement(req.params.id);
       if (!announcement) {

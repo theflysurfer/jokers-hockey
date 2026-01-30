@@ -7,11 +7,19 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  role: text("role").notNull().default("parent"), // "admin", "director", "secretary", "treasurer", "coach", "photographer", "parent"
+  fullName: text("full_name"),
+  phone: text("phone"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -108,3 +116,54 @@ export const announcements = pgTable("announcements", {
 export const insertAnnouncementSchema = createInsertSchema(announcements).omit({ id: true, createdAt: true, publishedAt: true });
 export type Announcement = typeof announcements.$inferSelect;
 export type InsertAnnouncement = z.infer<typeof insertAnnouncementSchema>;
+
+// Teams - Phase 2
+export const teams = pgTable("teams", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  category: text("category").notNull(), // "youth", "adult"
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertTeamSchema = createInsertSchema(teams).omit({ id: true, createdAt: true });
+export type Team = typeof teams.$inferSelect;
+export type InsertTeam = z.infer<typeof insertTeamSchema>;
+
+// Players - Phase 2
+export const players = pgTable("players", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
+  teamId: varchar("team_id").references(() => teams.id),
+  fullName: text("full_name").notNull(),
+  jerseyNumber: integer("jersey_number"),
+  birthDate: timestamp("birth_date"),
+  parentName: text("parent_name"),
+  parentEmail: text("parent_email"),
+  parentPhone: text("parent_phone"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertPlayerSchema = createInsertSchema(players).omit({ id: true, createdAt: true });
+export type Player = typeof players.$inferSelect;
+export type InsertPlayer = z.infer<typeof insertPlayerSchema>;
+
+// Match Inscriptions - Phase 2
+export const matchInscriptions = pgTable("match_inscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  matchId: varchar("match_id").references(() => matches.id).notNull(),
+  playerId: varchar("player_id").references(() => players.id).notNull(),
+  userId: varchar("user_id").references(() => users.id),
+  status: text("status").notNull().default("confirmed"), // "confirmed", "maybe", "absent"
+  comment: text("comment"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertMatchInscriptionSchema = createInsertSchema(matchInscriptions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type MatchInscription = typeof matchInscriptions.$inferSelect;
+export type InsertMatchInscription = z.infer<typeof insertMatchInscriptionSchema>;
