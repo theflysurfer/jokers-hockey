@@ -56,10 +56,9 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    // Setup AdminJS interface
-    log('Setting up AdminJS...');
-    await setupAdminJS(app);
-    log('AdminJS configured at /admin');
+    // AdminJS disabled due to compatibility issues with ESM/Drizzle
+    // Use REST API at /api/* for admin operations
+    // See CLAUDE.md for API documentation
 
     // Register authentication routes
     registerAuthRoutes(app);
