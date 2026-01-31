@@ -1,6 +1,6 @@
 import AdminJS from 'adminjs'
 import AdminJSExpress from '@adminjs/express'
-import { Database, Resource } from 'adminjs-drizzle'
+import { Database, Resource } from '@adminjs/sql'
 import { db } from './db'
 import * as schema from '@shared/schema'
 import session from 'express-session'
@@ -8,15 +8,25 @@ import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import type { Express } from 'express'
 
-// Register Drizzle adapter
+// Register SQL adapter
 AdminJS.registerAdapter({ Database, Resource })
 
 // Create AdminJS instance
 export const createAdminJS = () => {
   const admin = new AdminJS({
     databases: [{
-      db,
-      schema,
+      connectionString: process.env.DATABASE_URL!,
+      database: 'jokers_prod',
+      tables: [
+        'matches',
+        'photos',
+        'videos',
+        'staff',
+        'announcements',
+        'announcement_photos',
+        'newsletters',
+        'users'
+      ]
     }],
     rootPath: '/admin',
     branding: {
@@ -25,117 +35,7 @@ export const createAdminJS = () => {
       favicon: '/assets/logo.svg',
       softwareBrothers: false,
     },
-    resources: [
-      {
-        resource: schema.matches,
-        options: {
-          navigation: {
-            name: 'Matchs',
-            icon: 'Calendar',
-          },
-          properties: {
-            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
-            createdAt: { isVisible: { list: true, filter: true, show: true, edit: false } },
-          },
-        },
-      },
-      {
-        resource: schema.photos,
-        options: {
-          navigation: {
-            name: 'Médias',
-            icon: 'Camera',
-          },
-          properties: {
-            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
-            imageUrl: {
-              type: 'string',
-              isVisible: { list: true, filter: false, show: true, edit: true },
-            },
-          },
-        },
-      },
-      {
-        resource: schema.videos,
-        options: {
-          navigation: {
-            name: 'Médias',
-            icon: 'Video',
-          },
-          properties: {
-            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
-          },
-        },
-      },
-      {
-        resource: schema.staff,
-        options: {
-          navigation: {
-            name: 'Équipe',
-            icon: 'Users',
-          },
-          properties: {
-            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
-            order: { type: 'number' },
-          },
-        },
-      },
-      {
-        resource: schema.announcements,
-        options: {
-          navigation: {
-            name: 'Actualités',
-            icon: 'Megaphone',
-          },
-          properties: {
-            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
-            content: { type: 'textarea' },
-            isPublished: { type: 'boolean' },
-          },
-        },
-      },
-      {
-        resource: schema.announcementPhotos,
-        options: {
-          navigation: {
-            name: 'Actualités',
-            icon: 'Link',
-          },
-          properties: {
-            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
-            displayOrder: { type: 'number' },
-          },
-        },
-      },
-      {
-        resource: schema.newsletters,
-        options: {
-          navigation: {
-            name: 'Newsletter',
-            icon: 'Mail',
-          },
-          properties: {
-            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
-          },
-        },
-      },
-      {
-        resource: schema.users,
-        options: {
-          navigation: {
-            name: 'Administration',
-            icon: 'Settings',
-          },
-          properties: {
-            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
-            password: {
-              type: 'password',
-              isVisible: { list: false, filter: false, show: false, edit: true },
-            },
-          },
-        },
-      },
-    ],
+    resources: [],
   })
 
   return admin

@@ -56,10 +56,10 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    // Setup AdminJS interface (temporarily disabled due to ESM import error)
-    // log('Setting up AdminJS...');
-    // setupAdminJS(app);
-    // log('AdminJS configured at /admin');
+    // Setup AdminJS interface
+    log('Setting up AdminJS...');
+    setupAdminJS(app);
+    log('AdminJS configured at /admin');
 
     // Register authentication routes
     registerAuthRoutes(app);
