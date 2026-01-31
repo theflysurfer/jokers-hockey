@@ -52,7 +52,7 @@ export function registerAuthRoutes(app: Express) {
         fullName: fullName || null,
         role: role || 'parent',
         phone: phone || null,
-        active: true,
+        active: false, // Requires admin approval
       });
 
       const { password: _, ...userWithoutPassword } = user;

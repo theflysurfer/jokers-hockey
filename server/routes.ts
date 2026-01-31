@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertMatchSchema, insertPhotoSchema, insertVideoSchema, insertNewsletterSchema, insertStaffSchema, insertAnnouncementSchema } from "@shared/schema";
 import { requireRole, requireAdmin } from './auth/rbac';
+import { registerUserRoutes } from './routes/users';
 import { db } from "./db";
 import { sql } from "drizzle-orm";
 import multer from "multer";
@@ -424,6 +425,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message });
     }
   });
+
+  // Register user management routes
+  registerUserRoutes(app);
 
   const httpServer = createServer(app);
 

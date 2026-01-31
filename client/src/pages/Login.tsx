@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'wouter';
 
 export default function Login() {
   const { login } = useAuth();
@@ -61,6 +62,20 @@ export default function Login() {
               {isLoading ? 'Connexion...' : 'Se connecter'}
             </Button>
           </form>
+
+          <div className="mt-6 text-center space-y-2">
+            <Link href="/forgot-password">
+              <Button variant="link" className="text-sm">
+                Mot de passe oublié ?
+              </Button>
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              Pas encore de compte ?{' '}
+              <Link href="/register">
+                <span className="text-primary hover:underline cursor-pointer">S'inscrire</span>
+              </Link>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
