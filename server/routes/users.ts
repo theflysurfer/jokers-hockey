@@ -4,6 +4,7 @@ import { users, passwordResetTokens } from '@shared/schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
+import { sendEmail, emailTemplates } from '../services/email';
 
 export function registerUserRoutes(app: Express) {
   // Get all users (admin only)
@@ -94,6 +95,12 @@ export function registerUserRoutes(app: Express) {
 
     const { fullName, email, phone, active, role } = req.body;
 
+    // Get user before update to check if active status changed
+    const [targetUser] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    if (!targetUser) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
     const updates: any = {};
     if (fullName !== undefined) updates.fullName = fullName;
     if (email !== undefined) updates.email = email;
@@ -108,6 +115,23 @@ export function registerUserRoutes(app: Express) {
     updates.updatedAt = new Date();
 
     await db.update(users).set(updates).where(eq(users.id, userId));
+
+    // Send welcome email if account was just activated
+    if (currentUser[0].role === 'admin' && active === true && targetUser.active === false) {
+      try {
+        await sendEmail({
+          to: targetUser.email,
+          subject: '🎉 Votre compte Les Jokers a été activé !',
+          html: emailTemplates.accountActivated(
+            targetUser.fullName || targetUser.username,
+            targetUser.username
+          ),
+        });
+      } catch (error) {
+        console.error('Failed to send activation email:', error);
+        // Don't fail the update if email fails
+      }
+    }
 
     res.json({ message: 'Utilisateur mis à jour' });
   });
@@ -214,15 +238,22 @@ export function registerUserRoutes(app: Express) {
       used: false,
     });
 
-    // TODO: Send email with reset link
+    // Send email with reset link
     const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${token}`;
 
-    // For dev: log to console
-    console.log('\n===== PASSWORD RESET =====');
-    console.log(`User: ${user.email}`);
-    console.log(`Link: ${resetLink}`);
-    console.log(`Token expires: ${expiresAt.toLocaleString()}`);
-    console.log('==========================\n');
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: '🔐 Réinitialisation de votre mot de passe',
+        html: emailTemplates.passwordReset(
+          user.fullName || user.username,
+          resetLink
+        ),
+      });
+    } catch (error) {
+      console.error('Failed to send password reset email:', error);
+      // Still return success to prevent email enumeration
+    }
 
     res.json({ message: 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.' });
   });

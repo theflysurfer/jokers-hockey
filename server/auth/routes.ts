@@ -2,6 +2,10 @@ import type { Express, Request, Response, NextFunction } from 'express';
 import passport from './passport';
 import bcrypt from 'bcryptjs';
 import { storage } from '../storage';
+import { sendEmail, emailTemplates } from '../services/email';
+import { db } from '../db';
+import { users } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 export function registerAuthRoutes(app: Express) {
   app.post('/api/auth/login', (req: Request, res: Response, next: NextFunction) => {
@@ -54,6 +58,26 @@ export function registerAuthRoutes(app: Express) {
         phone: phone || null,
         active: false, // Requires admin approval
       });
+
+      // Notify admins about new registration
+      try {
+        const admins = await db.select().from(users).where(eq(users.role, 'admin'));
+        for (const admin of admins) {
+          await sendEmail({
+            to: admin.email,
+            subject: '🔔 Nouvelle inscription en attente',
+            html: emailTemplates.newRegistration(
+              admin.fullName || admin.username,
+              user.fullName || user.username,
+              user.email,
+              user.id
+            ),
+          });
+        }
+      } catch (error) {
+        console.error('Failed to send admin notification:', error);
+        // Don't fail registration if email fails
+      }
 
       const { password: _, ...userWithoutPassword } = user;
       res.status(201).json({ message: 'Utilisateur créé', user: userWithoutPassword });
