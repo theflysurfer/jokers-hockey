@@ -171,6 +171,39 @@ Configuration disponible dans :
 - `C:\Users\julien\OneDrive\Coding\_référentiels de code\Hostinger\docs\docs\02-applications\cms-sites\jokers-hockey.md`
 - `C:\Users\julien\OneDrive\Coding\_référentiels de code\Hostinger\apps\03-jokers\README.md`
 
+## Ressources WhatsApp
+
+### Localisation des contenus
+
+**Groupe principal**: `R.H.A Jokers - Communauté` (canal Annonces)
+- Admin: Charly Dammann
+- Contenu: Affiches de matchs, annonces officielles, photos d'événements
+
+### Affiches de matchs Saint-Valentin (Février 2026)
+
+**Localisation**: Groupe `R.H.A Jokers - Communauté` > Canal `Annonces`
+
+**Affiches disponibles** (3 posters):
+1. **Samedi 14/02/2026 - 18h**: N1 vs La Teste @ Gymnase du Charrel
+2. **Samedi 14/02/2026 - 20h**: N3 vs Ajaccio @ Gymnase du Charrel
+3. **Dimanche 15/02/2026 - 13h**: N1 vs Bordeaux @ Gymnase du Charrel
+
+**Format**: Images 1080x1350px (format portrait)
+
+**Événement spécial**: Roses offertes aux femmes/filles à l'entrée
+
+### Autres contenus à récupérer
+
+**Photos diplômes BF1**: Lilou & Chab - À localiser dans groupes RHA
+**Photos boutique**: Produits merchandising - À localiser
+
+### Accès WhatsApp Web
+
+1. Ouvrir https://web.whatsapp.com
+2. Naviguer vers l'icône "Communautés" (sidebar gauche)
+3. Sélectionner le groupe ou la communauté appropriée
+4. Les images sont stockées en blob URLs (téléchargement manuel requis)
+
 ## Maintenance
 
 ### Logs

@@ -10,15 +10,23 @@ import PhotoGallery from "@/components/PhotoGallery";
 import VideoGallery from "@/components/VideoGallery";
 import { Megaphone } from "lucide-react";
 
+interface AnnouncementPhoto {
+  id: number;
+  title: string;
+  imageUrl: string;
+  description: string | null;
+}
+
 interface Announcement {
-  id: string;
+  id: number;
   title: string;
   content: string;
   category: string | null;
-  authorId: string | null;
-  isPublished: boolean;
-  createdAt: string;
-  publishedAt: string | null;
+  author_id: number | null;
+  is_published: boolean;
+  created_at: string;
+  published_at: string | null;
+  photos?: AnnouncementPhoto[];
 }
 
 export default function Actualites() {
@@ -108,13 +116,27 @@ export default function Actualites() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               {announcements.map((announcement) => (
                 <Card key={announcement.id} className="overflow-hidden hover-elevate active-elevate-2" data-testid={`news-${announcement.id}`}>
+                  {/* Photo gallery */}
+                  {announcement.photos && announcement.photos.length > 0 && (
+                    <div className="grid grid-cols-2 gap-1 p-2">
+                      {announcement.photos.slice(0, 4).map((photo) => (
+                        <img
+                          key={photo.id}
+                          src={photo.imageUrl}
+                          alt={photo.description || photo.title}
+                          className="w-full h-40 object-cover rounded"
+                        />
+                      ))}
+                    </div>
+                  )}
+
                   <div className="p-6">
                     <div className="flex items-center gap-2 mb-3">
                       <Badge variant={getCategoryBadgeColor(announcement.category)} data-testid="badge-category">
                         {announcement.category || "Général"}
                       </Badge>
                       <span className="text-sm text-muted-foreground" data-testid="text-date">
-                        {formatDate(announcement.publishedAt)}
+                        {formatDate(announcement.published_at)}
                       </span>
                     </div>
                     <h3 className="text-2xl font-semibold mb-3" data-testid="text-title">{announcement.title}</h3>
@@ -122,6 +144,11 @@ export default function Actualites() {
                       {announcement.content.substring(0, 200)}
                       {announcement.content.length > 200 && "..."}
                     </div>
+                    {announcement.photos && announcement.photos.length > 4 && (
+                      <p className="text-sm text-muted-foreground mb-4">
+                        +{announcement.photos.length - 4} photos
+                      </p>
+                    )}
                     <Button variant="outline" data-testid="button-read-more">Lire la suite</Button>
                   </div>
                 </Card>

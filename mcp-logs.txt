@@ -1,0 +1,14 @@
+{"level":30,"time":"2026-01-31T01:09:18.970Z","pid":24804,"hostname":"XPS15","msg":"Starting WhatsApp MCP Server..."}
+{"level":30,"time":"2026-01-31T01:09:18.971Z","pid":24804,"hostname":"XPS15","msg":"Initializing database..."}
+{"level":30,"time":"2026-01-31T01:09:18.973Z","pid":24804,"hostname":"XPS15","msg":"Database initialized successfully."}
+{"level":30,"time":"2026-01-31T01:09:18.973Z","pid":24804,"hostname":"XPS15","msg":"Attempting to connect to WhatsApp..."}
+{"level":30,"time":"2026-01-31T01:09:19.129Z","pid":24804,"hostname":"XPS15","msg":"WhatsApp connection process initiated."}
+{"level":30,"time":"2026-01-31T01:09:19.129Z","pid":24804,"hostname":"XPS15","msg":"Starting MCP server..."}
+{"level":30,"time":"2026-01-31T01:09:19.130Z","pid":24804,"hostname":"XPS15","msg":"Initializing MCP server..."}
+{"level":30,"time":"2026-01-31T01:09:19.147Z","pid":24804,"hostname":"XPS15","msg":"MCP server configured. Connecting stdio transport..."}
+{"level":30,"time":"2026-01-31T01:09:19.148Z","pid":24804,"hostname":"XPS15","msg":"MCP transport connected. Server is ready and listening via stdio."}
+{"level":30,"time":"2026-01-31T01:09:19.148Z","pid":24804,"hostname":"XPS15","msg":"MCP Server setup complete. Waiting for requests from client..."}
+{"level":30,"time":"2026-01-31T01:09:19.148Z","pid":24804,"hostname":"XPS15","msg":"MCP Server started and listening."}
+{"level":30,"time":"2026-01-31T01:09:19.148Z","pid":24804,"hostname":"XPS15","msg":"Application setup complete. Running..."}
+{"level":30,"time":"2026-01-31T01:09:43.567Z","pid":24804,"hostname":"XPS15","msg":"[MCP Tool] Executing list_chats: limit=10, page=0, sort=last_active, query=undefined, lastMsg=true"}
+{"level":30,"time":"2026-01-31T01:09:52.986Z","pid":24804,"hostname":"XPS15","msg":"[MCP Tool] Executing list_chats: limit=20, page=0, sort=last_active, query=jokers, lastMsg=true"}

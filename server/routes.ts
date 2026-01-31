@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertMatchSchema, insertPhotoSchema, insertVideoSchema, insertNewsletterSchema, insertStaffSchema, insertAnnouncementSchema } from "@shared/schema";
 import { requireRole, requireAdmin } from './auth/rbac';
+import { db } from "./db";
+import { sql } from "drizzle-orm";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -317,13 +319,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Announcements routes
+  // Announcements routes with photos
   app.get("/api/announcements", async (req, res) => {
     try {
       const category = req.query.category as string | undefined;
       const publishedOnly = req.query.publishedOnly !== 'false'; // Default to true
-      const announcements = await storage.getAllAnnouncements(category, publishedOnly);
-      res.json(announcements);
+
+      // Build SQL query with photos joined
+      let query = sql`
+        SELECT
+          a.id,
+          a.title,
+          a.content,
+          a.category,
+          a.author_id,
+          a.is_published,
+          a.created_at,
+          a.published_at,
+          COALESCE(
+            json_agg(
+              json_build_object(
+                'id', p.id,
+                'title', p.title,
+                'imageUrl', p.image_url,
+                'description', p.description
+              ) ORDER BY ap.display_order
+            ) FILTER (WHERE p.id IS NOT NULL),
+            '[]'::json
+          ) as photos
+        FROM announcements a
+        LEFT JOIN announcement_photos ap ON ap.announcement_id = a.id
+        LEFT JOIN photos p ON p.id = ap.photo_id
+      `;
+
+      // Add WHERE conditions
+      if (publishedOnly && category) {
+        query = sql`${query} WHERE a.is_published = ${publishedOnly} AND a.category = ${category}`;
+      } else if (publishedOnly) {
+        query = sql`${query} WHERE a.is_published = ${publishedOnly}`;
+      } else if (category) {
+        query = sql`${query} WHERE a.category = ${category}`;
+      }
+
+      query = sql`${query} GROUP BY a.id ORDER BY a.published_at DESC`;
+
+      const result = await db.execute(query);
+      res.json(result.rows);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
