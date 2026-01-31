@@ -9,6 +9,8 @@ import CalendarView from "@/components/CalendarView";
 import PhotoGallery from "@/components/PhotoGallery";
 import VideoGallery from "@/components/VideoGallery";
 import { Megaphone } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface AnnouncementPhoto {
   id: number;
@@ -27,6 +29,79 @@ interface Announcement {
   created_at: string;
   published_at: string | null;
   photos?: AnnouncementPhoto[];
+}
+
+function AnnouncementCard({
+  announcement,
+  getCategoryBadgeColor,
+  formatDate
+}: {
+  announcement: Announcement;
+  getCategoryBadgeColor: (category: string | null) => string;
+  formatDate: (dateString: string | null) => string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const truncatedContent = announcement.content.length > 200
+    ? announcement.content.substring(0, 200) + "..."
+    : announcement.content;
+
+  return (
+    <Card className="overflow-hidden hover-elevate active-elevate-2" data-testid={`news-${announcement.id}`}>
+      {/* Photo gallery */}
+      {announcement.photos && announcement.photos.length > 0 && (
+        <div className="grid grid-cols-2 gap-1 p-2">
+          {announcement.photos.slice(0, 4).map((photo) => (
+            <img
+              key={photo.id}
+              src={photo.imageUrl}
+              alt={photo.description || photo.title}
+              className="w-full h-40 object-cover rounded"
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <Badge variant={getCategoryBadgeColor(announcement.category)} data-testid="badge-category">
+            {announcement.category || "Général"}
+          </Badge>
+          <span className="text-sm text-muted-foreground" data-testid="text-date">
+            {formatDate(announcement.published_at)}
+          </span>
+        </div>
+        <h3 className="text-2xl font-semibold mb-3" data-testid="text-title">
+          {announcement.title}
+        </h3>
+
+        {/* Markdown content */}
+        <div
+          className="prose prose-sm prose-invert max-w-none mb-4 text-muted-foreground [&_a]:text-primary [&_a]:underline hover:[&_a]:text-primary/80"
+          data-testid="text-content"
+        >
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {expanded ? announcement.content : truncatedContent}
+          </ReactMarkdown>
+        </div>
+
+        {announcement.photos && announcement.photos.length > 4 && (
+          <p className="text-sm text-muted-foreground mb-4">
+            +{announcement.photos.length - 4} photos
+          </p>
+        )}
+
+        {announcement.content.length > 200 && (
+          <Button
+            variant="outline"
+            onClick={() => setExpanded(!expanded)}
+            data-testid="button-read-more"
+          >
+            {expanded ? "Réduire" : "Lire la suite"}
+          </Button>
+        )}
+      </div>
+    </Card>
+  );
 }
 
 export default function Actualites() {
@@ -115,43 +190,12 @@ export default function Actualites() {
           {!isLoading && !error && announcements.length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               {announcements.map((announcement) => (
-                <Card key={announcement.id} className="overflow-hidden hover-elevate active-elevate-2" data-testid={`news-${announcement.id}`}>
-                  {/* Photo gallery */}
-                  {announcement.photos && announcement.photos.length > 0 && (
-                    <div className="grid grid-cols-2 gap-1 p-2">
-                      {announcement.photos.slice(0, 4).map((photo) => (
-                        <img
-                          key={photo.id}
-                          src={photo.imageUrl}
-                          alt={photo.description || photo.title}
-                          className="w-full h-40 object-cover rounded"
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Badge variant={getCategoryBadgeColor(announcement.category)} data-testid="badge-category">
-                        {announcement.category || "Général"}
-                      </Badge>
-                      <span className="text-sm text-muted-foreground" data-testid="text-date">
-                        {formatDate(announcement.published_at)}
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-semibold mb-3" data-testid="text-title">{announcement.title}</h3>
-                    <div className="text-muted-foreground mb-4 whitespace-pre-wrap" data-testid="text-content">
-                      {announcement.content.substring(0, 200)}
-                      {announcement.content.length > 200 && "..."}
-                    </div>
-                    {announcement.photos && announcement.photos.length > 4 && (
-                      <p className="text-sm text-muted-foreground mb-4">
-                        +{announcement.photos.length - 4} photos
-                      </p>
-                    )}
-                    <Button variant="outline" data-testid="button-read-more">Lire la suite</Button>
-                  </div>
-                </Card>
+                <AnnouncementCard
+                  key={announcement.id}
+                  announcement={announcement}
+                  getCategoryBadgeColor={getCategoryBadgeColor}
+                  formatDate={formatDate}
+                />
               ))}
             </div>
           )}
