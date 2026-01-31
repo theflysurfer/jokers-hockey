@@ -7,6 +7,7 @@ import { sessionConfig } from './auth/session';
 import { registerAuthRoutes } from './auth/routes';
 import { setupVite, serveStatic, log } from "./vite";
 import { registerRoutes } from "./routes";
+import { setupAdminJS } from './admin';
 
 const app = express();
 
@@ -55,18 +56,16 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
+    // Setup AdminJS interface
+    log('Setting up AdminJS...');
+    setupAdminJS(app);
+    log('AdminJS configured at /admin');
+
     // Register authentication routes
     registerAuthRoutes(app);
 
     // Register custom API routes
     await registerRoutes(app);
-
-    // Payload 3.x automatically creates its routes on the Express app
-    // No need to manually mount middleware
-    // Routes available:
-    // - /admin/* - Admin panel
-    // - /api/* - REST API
-    // - /graphql - GraphQL API (if enabled)
 
     // Debug: Log all registered routes
     app._router.stack.forEach((middleware: any) => {

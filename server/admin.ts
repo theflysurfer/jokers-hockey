@@ -95,6 +95,19 @@ export const createAdminJS = () => {
         },
       },
       {
+        resource: schema.announcementPhotos,
+        options: {
+          navigation: {
+            name: 'Actualités',
+            icon: 'Link',
+          },
+          properties: {
+            id: { isVisible: { list: false, filter: false, show: true, edit: false } },
+            displayOrder: { type: 'number' },
+          },
+        },
+      },
+      {
         resource: schema.newsletters,
         options: {
           navigation: {
