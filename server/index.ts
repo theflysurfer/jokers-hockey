@@ -58,7 +58,7 @@ app.use((req, res, next) => {
   try {
     // Setup AdminJS interface
     log('Setting up AdminJS...');
-    setupAdminJS(app);
+    await setupAdminJS(app);
     log('AdminJS configured at /admin');
 
     // Register authentication routes

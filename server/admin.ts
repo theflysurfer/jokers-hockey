@@ -12,22 +12,15 @@ import type { Express } from 'express'
 AdminJS.registerAdapter({ Database, Resource })
 
 // Create AdminJS instance
-export const createAdminJS = () => {
+export const createAdminJS = async () => {
+  // Create database instance for AdminJS
+  const adminDb = await new Database('postgresql', {
+    connectionString: process.env.DATABASE_URL!,
+    database: 'jokers_prod',
+  })
+
   const admin = new AdminJS({
-    databases: [{
-      connectionString: process.env.DATABASE_URL!,
-      database: 'jokers_prod',
-      tables: [
-        'matches',
-        'photos',
-        'videos',
-        'staff',
-        'announcements',
-        'announcement_photos',
-        'newsletters',
-        'users'
-      ]
-    }],
+    databases: [adminDb],
     rootPath: '/admin',
     branding: {
       companyName: 'Jokers Aubagne',
@@ -42,8 +35,8 @@ export const createAdminJS = () => {
 }
 
 // Setup AdminJS with authentication
-export const setupAdminJS = (app: Express) => {
-  const admin = createAdminJS()
+export const setupAdminJS = async (app: Express) => {
+  const admin = await createAdminJS()
 
   const router = AdminJSExpress.buildAuthenticatedRouter(
     admin,
